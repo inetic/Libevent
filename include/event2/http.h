@@ -145,6 +145,9 @@ int evhttp_accept_socket(struct evhttp *http, evutil_socket_t fd);
 EVENT2_EXPORT_SYMBOL
 struct evhttp_bound_socket *evhttp_accept_socket_with_handle(struct evhttp *http, evutil_socket_t fd);
 
+EVENT2_EXPORT_SYMBOL
+void evhttp_get_request(struct evhttp *, evutil_socket_t, struct sockaddr *, ev_socklen_t);
+
 /**
  * The most low-level evhttp_bind/accept method: takes an evconnlistener, and
  * returns an evhttp_bound_socket.  The listener will be freed when the bound
