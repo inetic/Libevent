@@ -430,7 +430,8 @@ evhttp_make_header_request(struct evhttp_connection *evcon,
 {
 	const char *method;
 
-	evhttp_remove_header(req->output_headers, "Proxy-Connection");
+	// https://github.com/libevent/libevent/issues/507
+	//evhttp_remove_header(req->output_headers, "Proxy-Connection");
 
 	/* Generate request line */
 	if (!(method = evhttp_method(req->type))) {
