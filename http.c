@@ -732,6 +732,9 @@ evhttp_connection_fail_(struct evhttp_connection *evcon,
 
 	bufferevent_disable(evcon->bufev, EV_READ|EV_WRITE);
 
+	error_cb = req->error_cb;
+	error_cb_arg = req->cb_arg;
+
 	if (evcon->flags & EVHTTP_CON_INCOMING) {
 		/*
 		 * for incoming requests, there are two different
@@ -743,11 +746,12 @@ evhttp_connection_fail_(struct evhttp_connection *evcon,
 		 */
 		if (evhttp_connection_incoming_fail(req, error) == -1)
 			evhttp_connection_free(evcon);
+		// https://github.com/libevent/libevent/issues/509
+		if (error_cb != NULL)
+			error_cb(error, error_cb_arg);
 		return;
 	}
 
-	error_cb = req->error_cb;
-	error_cb_arg = req->cb_arg;
 	/* when the request was canceled, the callback is not executed */
 	if (error != EVREQ_HTTP_REQUEST_CANCEL) {
 		/* save the callback for later; the cb might free our object */
@@ -2828,6 +2832,11 @@ void
 evhttp_send_reply_start(struct evhttp_request *req, int code,
     const char *reason)
 {
+	// https://github.com/libevent/libevent/issues/509
+	if (req->evcon == NULL) {
+		return;
+	}
+
 	evhttp_response_code_(req, code, reason);
 	if (evhttp_find_header(req->output_headers, "Content-Length") == NULL &&
 	    REQ_VERSION_ATLEAST(req, 1, 1) &&
