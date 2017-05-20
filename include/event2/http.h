@@ -532,6 +532,9 @@ struct evhttp_connection *evhttp_connection_base_bufferevent_new(
 EVENT2_EXPORT_SYMBOL
 struct bufferevent* evhttp_connection_get_bufferevent(struct evhttp_connection *evcon);
 
+EVENT2_EXPORT_SYMBOL
+struct bufferevent* evhttp_connection_detach_bufferevent(struct evhttp_connection *evcon);
+
 /**
  * Return the HTTP server associated with this connection, or NULL.
  */

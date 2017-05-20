@@ -2404,6 +2404,15 @@ struct bufferevent* evhttp_connection_get_bufferevent(struct evhttp_connection *
 	return evcon->bufev;
 }
 
+struct bufferevent* evhttp_connection_detach_bufferevent(struct evhttp_connection *evcon)
+{
+    struct bufferevent *bev = evcon->bufev;
+    evcon->bufev = bufferevent_socket_new(evcon->base, -1, 0);
+    evcon->fd = -1;
+    evcon->state = EVCON_DISCONNECTED;
+    return bev;
+}
+
 struct evhttp *
 evhttp_connection_get_server(struct evhttp_connection *evcon)
 {
